@@ -90,7 +90,6 @@ button { cursor: pointer; }
   color: #35677d; font-size: 14px; box-shadow: 0 6px 18px rgba(65,127,140,.08);
 }
 .counter strong { margin: 0 4px; color: #075a9d; font-size: 17px; }
-.counter b { margin-left: 9px; padding: 3px 9px; border-radius: 999px; color: #156048; background: #d8f3e6; font-size: 12px; }
 .connection-error {
   display: block; width: min(720px, 94%); margin: 4px auto 12px; padding: 10px 16px;
   border: 1px solid #e2b3b3; border-radius: 12px; color: #963b44; background: #fff4f4;
@@ -138,8 +137,6 @@ button { cursor: pointer; }
 }
 .stage-qr img { width: 126px; height: 126px; }
 .stage-qr span { font-size: 12px; }
-.storage-note { margin: 14px auto 0; color: #64828d; font-size: 13px; text-align: center; }
-
 .dialog-card { width: min(520px, calc(100vw - 28px)); max-width: 520px; padding: 24px; border-radius: 22px; box-shadow: 0 25px 80px rgba(0,48,80,.27); }
 .dialog-card [data-slot="dialog-title"] { color: #075a9d; font-size: 21px; font-weight: 850; }
 .message-form { display: grid; gap: 15px; }
@@ -181,3 +178,4 @@ button { cursor: pointer; }
   .leaf-body { animation: none; }
   .leaf-wrap { transition: none; }
 }
+
