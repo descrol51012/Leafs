@@ -266,7 +266,7 @@ export default function Home() {
       {!displayMode && (
         <nav className="toolbar" aria-label="留言樹功能">
           <Button className="pill primary-pill" size="lg" onClick={() => setFormOpen(true)}><Plus />新增一片葉子</Button>
-          <span className="counter">目前共有 <strong>{messages.length}</strong> 片葉子 <b>線上共用</b></span>
+          <span className="counter">目前共有 <strong>{messages.length}</strong> 片葉子</span>
           <Button className="pill" variant="outline" size="lg" onClick={() => setQrOpen(true)}><QrCode />分享 QR Code</Button>
           <Button className="pill" variant="outline" size="lg" onClick={() => setListOpen(true)}><List />看全部留言</Button>
           <Button className="pill" variant="outline" size="lg" onClick={exportMessages} disabled={!messages.length}><Download />備份</Button>
@@ -316,8 +316,6 @@ export default function Home() {
         </button>}
       </section>
 
-      {!displayMode && <p className="storage-note">留言安全儲存在線上，任何裝置開啟這個網址都會看到同一棵樹。</p>}
-
       <Dialog open={formOpen} onOpenChange={setFormOpen}>
         <DialogContent className="dialog-card">
           <DialogHeader><DialogTitle>新增一片藍色樹葉</DialogTitle><DialogDescription>名字和留言會直接顯示在葉子上。</DialogDescription></DialogHeader>
@@ -365,3 +363,4 @@ export default function Home() {
     </main>
   );
 }
+
