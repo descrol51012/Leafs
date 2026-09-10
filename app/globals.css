@@ -168,7 +168,8 @@ button { cursor: pointer; }
   .site-header h1 { font-size: 32px; }
   .tree-stage { min-height: 390px; aspect-ratio: 740/540; border-radius: 22px; }
   .tree-svg { width: 135%; left: -17.5%; max-width: none; }
-  .leaf-wrap:hover, .leaf-wrap:focus-visible { transform: translate(-50%,-50%) scale(1.65); }
+  .leaf-wrap { max-width: 104px; max-height: 68px; }
+  .leaf-wrap:hover, .leaf-wrap:focus-visible { transform: translate(-50%,-50%) scale(1.35); }
   .leaf-body { padding: 7px 12px 7px 15px; }
   .stage-qr { right: 10px; bottom: 10px; }
   .stage-qr img { width: 95px; height: 95px; }
