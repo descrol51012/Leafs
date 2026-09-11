@@ -4,7 +4,6 @@ import { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from 're
 import QRCode from 'qrcode';
 import { Download, Leaf, List, Plus, QrCode, Trash2, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
@@ -67,7 +66,6 @@ export default function Home() {
   const [listOpen, setListOpen] = useState(false);
   const [qrOpen, setQrOpen] = useState(false);
   const [clearOpen, setClearOpen] = useState(false);
-  const [name, setName] = useState('');
   const [message, setMessage] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [shareUrl, setShareUrl] = useState('');
@@ -142,28 +140,25 @@ export default function Home() {
     const registration = context.registerTool({
       name: 'add_leaf_message',
       title: '新增樹葉留言',
-      description: '在目前的共用留言樹新增一片含名字與短留言的葉子。',
+      description: '在目前的共用留言樹新增一片含短留言的葉子。',
       inputSchema: {
         type: 'object',
         properties: {
-          name: { type: 'string', minLength: 1, maxLength: 10 },
           message: { type: 'string', minLength: 1, maxLength: 40 },
         },
-        required: ['name', 'message'],
+        required: ['message'],
         additionalProperties: false,
       },
       annotations: { readOnlyHint: false, untrustedContentHint: true },
       async execute(input) {
-        const value = input as { name?: unknown; message?: unknown };
-        const toolName = String(value?.name ?? '').trim();
+        const value = input as { message?: unknown };
         const toolMessage = String(value?.message ?? '').trim();
-        if (!toolName || toolName.length > 10 || !toolMessage || toolMessage.length > 40) {
-          throw new Error('名字需為 1–10 字，留言需為 1–40 字。');
+        if (!toolMessage || toolMessage.length > 40) {
+          throw new Error('留言需為 1–40 字。');
         }
         const items = await callApi({
           action: 'add',
           item: {
-            name: toolName,
             message: toolMessage,
             rotation: Math.round(Math.random() * 16 - 8),
             color: LEAF_COLORS[Math.floor(Math.random() * LEAF_COLORS.length)],
@@ -178,18 +173,17 @@ export default function Home() {
 
   async function submitMessage(event: FormEvent) {
     event.preventDefault();
-    if (!name.trim() || !message.trim()) return;
+    if (!message.trim()) return;
     setSubmitting(true);
     try {
       await callApi({
         action: 'add',
         item: {
-          name: name.trim(), message: message.trim(),
+          message: message.trim(),
           rotation: Math.round(Math.random() * 16 - 8),
           color: LEAF_COLORS[Math.floor(Math.random() * LEAF_COLORS.length)],
         },
       });
-      setName('');
       setMessage('');
       setFormOpen(false);
       notify('葉子飄上樹了！');
@@ -303,9 +297,9 @@ export default function Home() {
             const position = positionFor(item.slot);
             return <button key={item.id} className="leaf-wrap"
               style={{ left: `${position.x}%`, top: `${position.y}%`, width: leafSize, height: leafSize * 0.65 }}
-              onClick={() => setDetail(item)} aria-label={`${item.name} 的留言：${item.message}`}>
+              onClick={() => setDetail(item)} aria-label={item.name ? `${item.name} 的留言：${item.message}` : `留言：${item.message}`}>
               <span className="leaf-body" style={{ background: item.color, transform: `rotate(${item.rotation}deg)` }}>
-                <b>{item.name}</b><span>{item.message}</span>
+                {item.name && <b>{item.name}</b>}<span>{item.message}</span>
               </span>
             </button>;
           })}
@@ -318,10 +312,9 @@ export default function Home() {
 
       <Dialog open={formOpen} onOpenChange={setFormOpen}>
         <DialogContent className="dialog-card">
-          <DialogHeader><DialogTitle>新增一片藍色樹葉</DialogTitle><DialogDescription>名字和留言會直接顯示在葉子上。</DialogDescription></DialogHeader>
+          <DialogHeader><DialogTitle>新增一片藍色樹葉</DialogTitle><DialogDescription>留言會直接顯示在葉子上。</DialogDescription></DialogHeader>
           <form onSubmit={submitMessage} className="message-form">
-            <label>你的名字<Input value={name} onChange={(event) => setName(event.target.value)} maxLength={10} required autoFocus /></label>
-            <label>留言內容<Textarea value={message} onChange={(event) => setMessage(event.target.value)} maxLength={40} required rows={4} /></label>
+            <label>留言內容<Textarea value={message} onChange={(event) => setMessage(event.target.value)} maxLength={40} required rows={4} autoFocus /></label>
             <span className="character-count">{message.length}/40</span>
             <DialogFooter className="form-actions"><Button type="button" variant="outline" onClick={() => setFormOpen(false)}>取消</Button><Button type="submit" disabled={submitting}>{submitting ? '送出中…' : '送出葉子'}</Button></DialogFooter>
           </form>
@@ -330,7 +323,7 @@ export default function Home() {
 
       <Dialog open={Boolean(detail)} onOpenChange={(open) => !open && setDetail(null)}>
         <DialogContent className="dialog-card">
-          <DialogHeader><DialogTitle>{detail?.name}</DialogTitle><DialogDescription>{detail && formatTime(detail.createdAt)}</DialogDescription></DialogHeader>
+          <DialogHeader><DialogTitle>{detail?.name || '留言'}</DialogTitle><DialogDescription>{detail && formatTime(detail.createdAt)}</DialogDescription></DialogHeader>
           <p className="detail-message">{detail?.message}</p>
           {isAdmin && <DialogFooter><Button variant="destructive" onClick={() => void deleteMessage()}><Trash2 />刪除這片葉子</Button></DialogFooter>}
         </DialogContent>
@@ -339,7 +332,7 @@ export default function Home() {
       <Dialog open={listOpen} onOpenChange={setListOpen}>
         <DialogContent className="dialog-card list-card">
           <DialogHeader><DialogTitle>全部留言</DialogTitle><DialogDescription>共 {messages.length} 片葉子</DialogDescription></DialogHeader>
-          <ul className="message-list">{[...messages].reverse().map((item) => <li key={item.id}><b>{item.name}</b><time>{formatTime(item.createdAt)}</time><span>{item.message}</span></li>)}{!messages.length && <li>還沒有任何留言。</li>}</ul>
+          <ul className="message-list">{[...messages].reverse().map((item) => <li key={item.id}>{item.name && <b>{item.name}</b>}<time>{formatTime(item.createdAt)}</time><span>{item.message}</span></li>)}{!messages.length && <li>還沒有任何留言。</li>}</ul>
         </DialogContent>
       </Dialog>
 
