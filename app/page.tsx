@@ -279,15 +279,7 @@ export default function Home() {
 
       <section className="tree-stage" aria-label="藍色留言樹">
         <div className="sun-glow" /><div className="ground" />
-        <svg className="tree-svg" viewBox="0 0 1000 540" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
-          <path d="M476 535 C472 468 481 428 488 392 L512 392 C519 428 528 468 524 535 Z" fill="#936245" />
-          <g fill="none" stroke="#936245" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M500 394 C436 388 356 378 268 356" strokeWidth="21" /><path d="M500 394 C564 388 644 378 732 356" strokeWidth="21" />
-            <path d="M500 386 C430 332 350 282 246 240" strokeWidth="17" /><path d="M500 386 C570 332 650 282 754 240" strokeWidth="17" />
-            <path d="M500 382 C498 310 500 238 500 148" strokeWidth="16" /><path d="M500 300 C456 252 416 206 374 154" strokeWidth="12" />
-            <path d="M500 300 C544 252 584 206 626 154" strokeWidth="12" />
-          </g>
-        </svg>
+        <img className="tree-image" src="/tree-silhouette.webp" alt="" aria-hidden="true" />
 
         {loading && <div className="empty-state">正在讓留言樹長出來…</div>}
         {!loading && !messages.length && !error && <div className="empty-state"><Leaf /><strong>等待第一片葉子</strong><span>點「新增一片葉子」寫下第一則留言。</span></div>}
