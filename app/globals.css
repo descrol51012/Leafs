@@ -126,6 +126,9 @@ button { cursor: pointer; }
 .leaf-body b, .leaf-body span { position: relative; z-index: 1; overflow: hidden; text-shadow: 0 1px 2px rgba(0,40,70,.3); }
 .leaf-body b { font-size: clamp(10px, 1.2vw, 13px); white-space: nowrap; text-overflow: ellipsis; }
 .leaf-body span { display: -webkit-box; font-size: clamp(8px, 1vw, 10.5px); line-height: 1.32; overflow-wrap: anywhere; -webkit-box-orient: vertical; -webkit-line-clamp: 3; }
+.dense-leaves .leaf-body { gap: 1px; padding: 4px 8px 4px 10px; }
+.dense-leaves .leaf-body b, .dense-leaves .leaf-body span { font-size: 8px; line-height: 1.2; }
+.dense-leaves .leaf-body span { -webkit-line-clamp: 2; }
 @keyframes sway { 0%,100% { translate: 0 0; } 50% { translate: 0 -4px; } }
 
 .empty-state {
@@ -172,7 +175,7 @@ button { cursor: pointer; }
   .site-header h1 { font-size: 32px; }
   .tree-stage { min-height: 390px; aspect-ratio: 740/540; border-radius: 22px; }
   .tree-image { left: -15%; width: 130%; height: 96%; }
-  .leaf-wrap { max-width: 104px; max-height: 68px; }
+  .leaf-wrap { max-width: 88px; max-height: 58px; }
   .leaf-wrap:hover, .leaf-wrap:focus-visible { transform: translate(-50%,-50%) scale(1.35); }
   .leaf-body { padding: 7px 12px 7px 15px; }
   .stage-qr { right: 10px; bottom: 10px; }
