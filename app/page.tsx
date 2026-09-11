@@ -30,22 +30,21 @@ type ModelContext = {
 };
 
 const LEAF_COLORS = ['#087ac1', '#1594d0', '#075caa', '#27a9df', '#176fc0', '#43b6e5'];
+const MAX_LEAVES = 60;
 const POSITIONS = [
   [50, 26], [29, 61], [72, 60], [20, 39], [80, 38], [39, 43], [61, 43], [33, 24],
   [67, 24], [14, 63], [86, 63], [44, 67], [56, 67], [25, 77], [75, 77], [50, 10],
   [41, 12], [59, 12], [12, 24], [88, 24], [20, 16], [80, 16], [10, 50], [90, 50],
   [35, 78], [65, 78], [46, 50], [54, 50], [29, 45], [71, 45], [16, 76], [84, 76],
+  [24, 31], [44, 31], [56, 31], [76, 31], [16, 34], [34, 35], [50, 36], [66, 35],
+  [84, 34], [14, 45], [25, 54], [37, 57], [50, 58], [63, 57], [75, 54], [86, 45],
+  [20, 68], [30, 68], [40, 72], [60, 72], [70, 68], [80, 68], [30, 9], [70, 9],
+  [9, 68], [91, 68], [45, 80], [55, 80],
 ] as const;
 
 function positionFor(slot: number) {
   const base = POSITIONS[slot % POSITIONS.length];
-  const cycle = Math.floor(slot / POSITIONS.length);
-  if (!cycle) return { x: base[0], y: base[1] };
-  const angle = slot * 2.399963;
-  return {
-    x: Math.max(8, Math.min(92, base[0] + Math.cos(angle) * cycle * 2.2)),
-    y: Math.max(8, Math.min(82, base[1] + Math.sin(angle) * cycle * 1.6)),
-  };
+  return { x: base[0], y: base[1] };
 }
 
 function formatTime(value: string) {
@@ -247,7 +246,7 @@ export default function Home() {
     }
   }
 
-  const leafSize = useMemo(() => Math.max(64, Math.min(138, 190 - messages.length * 3.2)), [messages.length]);
+  const leafSize = useMemo(() => Math.max(50, Math.min(112, 120 - messages.length * 1.15)), [messages.length]);
 
   return (
     <main className={displayMode ? 'site-shell display-mode' : 'site-shell'}>
@@ -259,7 +258,9 @@ export default function Home() {
 
       {!displayMode && (
         <nav className="toolbar" aria-label="留言樹功能">
-          <Button className="pill primary-pill" size="lg" onClick={() => setFormOpen(true)}><Plus />新增一片葉子</Button>
+          <Button className="pill primary-pill" size="lg" onClick={() => setFormOpen(true)} disabled={messages.length >= MAX_LEAVES}>
+            <Plus />{messages.length >= MAX_LEAVES ? '已達 60 片上限' : '新增一片葉子'}
+          </Button>
           <span className="counter">目前共有 <strong>{messages.length}</strong> 片葉子</span>
           <Button className="pill" variant="outline" size="lg" onClick={() => setQrOpen(true)}><QrCode />分享 QR Code</Button>
           <Button className="pill" variant="outline" size="lg" onClick={() => setListOpen(true)}><List />看全部留言</Button>
@@ -277,7 +278,7 @@ export default function Home() {
 
       {error && <button className="connection-error" onClick={() => void loadMessages(true)}>{error} 點此重試</button>}
 
-      <section className="tree-stage" aria-label="藍色留言樹">
+      <section className={messages.length > 30 ? 'tree-stage dense-leaves' : 'tree-stage'} aria-label="藍色留言樹">
         <div className="sun-glow" /><div className="ground" />
         <img className="tree-image" src="/tree-silhouette.webp" alt="" aria-hidden="true" />
 
