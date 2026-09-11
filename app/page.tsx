@@ -30,7 +30,6 @@ type ModelContext = {
 };
 
 const LEAF_COLORS = ['#087ac1', '#1594d0', '#075caa', '#27a9df', '#176fc0', '#43b6e5'];
-const MAX_LEAVES = 60;
 const POSITIONS = [
   [50, 26], [29, 61], [72, 60], [20, 39], [80, 38], [39, 43], [61, 43], [33, 24],
   [67, 24], [14, 63], [86, 63], [44, 67], [56, 67], [25, 77], [75, 77], [50, 10],
@@ -44,7 +43,13 @@ const POSITIONS = [
 
 function positionFor(slot: number) {
   const base = POSITIONS[slot % POSITIONS.length];
-  return { x: base[0], y: base[1] };
+  const cycle = Math.floor(slot / POSITIONS.length);
+  if (!cycle) return { x: base[0], y: base[1] };
+  const angle = slot * 2.399963;
+  return {
+    x: Math.max(7, Math.min(93, base[0] + Math.cos(angle) * cycle * 1.5)),
+    y: Math.max(7, Math.min(83, base[1] + Math.sin(angle) * cycle * 1.1)),
+  };
 }
 
 function formatTime(value: string) {
@@ -258,8 +263,8 @@ export default function Home() {
 
       {!displayMode && (
         <nav className="toolbar" aria-label="留言樹功能">
-          <Button className="pill primary-pill" size="lg" onClick={() => setFormOpen(true)} disabled={messages.length >= MAX_LEAVES}>
-            <Plus />{messages.length >= MAX_LEAVES ? '已達 60 片上限' : '新增一片葉子'}
+          <Button className="pill primary-pill" size="lg" onClick={() => setFormOpen(true)}>
+            <Plus />新增一片葉子
           </Button>
           <span className="counter">目前共有 <strong>{messages.length}</strong> 片葉子</span>
           <Button className="pill" variant="outline" size="lg" onClick={() => setQrOpen(true)}><QrCode />分享 QR Code</Button>
