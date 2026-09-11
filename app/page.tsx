@@ -44,11 +44,16 @@ const POSITIONS = [
 function positionFor(slot: number) {
   const base = POSITIONS[slot % POSITIONS.length];
   const cycle = Math.floor(slot / POSITIONS.length);
-  if (!cycle) return { x: base[0], y: base[1] };
-  const angle = slot * 2.399963;
+  let x = base[0];
+  let y = base[1];
+  if (cycle) {
+    const angle = slot * 2.399963;
+    x = Math.max(7, Math.min(93, x + Math.cos(angle) * cycle * 1.5));
+    y = Math.max(7, Math.min(83, y + Math.sin(angle) * cycle * 1.1));
+  }
   return {
-    x: Math.max(7, Math.min(93, base[0] + Math.cos(angle) * cycle * 1.5)),
-    y: Math.max(7, Math.min(83, base[1] + Math.sin(angle) * cycle * 1.1)),
+    x: 50 + (x - 50) * 0.91,
+    y,
   };
 }
 
