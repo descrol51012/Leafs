@@ -36,7 +36,7 @@ function cleanItem(value: unknown, slot: number, preserveCreatedAt = false): Sto
   const item = (value && typeof value === 'object' ? value : {}) as Record<string, unknown>;
   const name = cleanText(item.name, 10);
   const message = cleanText(item.message, 40);
-  if (!name || !message) throw new Error('名字和留言內容都必須填寫。');
+  if (!message) throw new Error('留言內容必須填寫。');
   const requestedRotation = Number(item.rotation);
   const rotation = Number.isFinite(requestedRotation)
     ? Math.max(-9, Math.min(9, Math.round(requestedRotation)))
@@ -132,3 +132,4 @@ export async function POST(request: Request) {
     );
   }
 }
+
