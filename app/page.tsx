@@ -2,7 +2,7 @@
 
 import { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import QRCode from 'qrcode';
-import { Download, Leaf, List, Plus, QrCode, Trash2, Upload } from 'lucide-react';
+import { Download, Leaf, List, Plus, QrCode, Trash2, Upload, Volume2, VolumeX } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import {
@@ -82,7 +82,9 @@ export default function Home() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [adminToken, setAdminToken] = useState('');
   const [displayMode, setDisplayMode] = useState(false);
+  const [musicPlaying, setMusicPlaying] = useState(false);
   const importRef = useRef<HTMLInputElement>(null);
+  const audioRef = useRef<HTMLAudioElement>(null);
 
   const notify = useCallback((text: string) => {
     setToast(text);
@@ -125,6 +127,51 @@ export default function Home() {
       errorCorrectionLevel: 'M',
     }).then(setQrDataUrl);
   }, [shareUrl]);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.volume = 0.24;
+
+    function removeUnlockListeners() {
+      window.removeEventListener('pointerdown', unlockMusic);
+      window.removeEventListener('keydown', unlockMusic);
+    }
+
+    async function startMusic() {
+      try {
+        await audio.play();
+        setMusicPlaying(true);
+        removeUnlockListeners();
+      } catch {
+        // Mobile browsers start the music after the visitor's first interaction.
+      }
+    }
+
+    function unlockMusic(event: Event) {
+      if (event.target instanceof Element && event.target.closest('[data-music-toggle]')) return;
+      void startMusic();
+    }
+
+    void startMusic();
+    window.addEventListener('pointerdown', unlockMusic);
+    window.addEventListener('keydown', unlockMusic);
+    return removeUnlockListeners;
+  }, []);
+
+  async function toggleMusic() {
+    const audio = audioRef.current;
+    if (!audio) return;
+    if (audio.paused) {
+      try {
+        await audio.play();
+      } catch {
+        notify('請再點一次播放音樂。');
+      }
+    } else {
+      audio.pause();
+    }
+  }
 
   const callApi = useCallback(async (payload: Record<string, unknown>) => {
     const response = await fetch('/api/messages', {
@@ -260,6 +307,8 @@ export default function Home() {
 
   return (
     <main className={displayMode ? 'site-shell display-mode' : 'site-shell'}>
+      <audio ref={audioRef} src="https://assets.mixkit.co/music/801/801.mp3" loop preload="auto"
+        onPlay={() => setMusicPlaying(true)} onPause={() => setMusicPlaying(false)} />
       <header className="site-header">
         <div className="eyebrow"><Leaf aria-hidden="true" /> 共用留言樹</div>
         <h1>藍色樹葉留言</h1>
@@ -274,6 +323,10 @@ export default function Home() {
           <span className="counter">目前共有 <strong>{messages.length}</strong> 片葉子</span>
           <Button className="pill" variant="outline" size="lg" onClick={() => setQrOpen(true)}><QrCode />分享 QR Code</Button>
           <Button className="pill" variant="outline" size="lg" onClick={() => setListOpen(true)}><List />看全部留言</Button>
+          <Button className="pill" variant="outline" size="lg" onClick={() => void toggleMusic()}
+            data-music-toggle aria-label={musicPlaying ? '暫停背景音樂' : '播放背景音樂'}>
+            {musicPlaying ? <Volume2 /> : <VolumeX />}{musicPlaying ? '音樂播放中' : '播放音樂'}
+          </Button>
           <Button className="pill" variant="outline" size="lg" onClick={exportMessages} disabled={!messages.length}><Download />備份</Button>
           {isAdmin && <>
             <Button className="pill" variant="outline" size="lg" onClick={() => importRef.current?.click()}><Upload />還原</Button>
