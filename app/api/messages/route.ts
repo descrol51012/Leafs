@@ -1,7 +1,7 @@
 import { env } from 'cloudflare:workers';
 
 const COLORS = ['#087ac1', '#1594d0', '#075caa', '#27a9df', '#176fc0', '#43b6e5'];
-const MAX_MESSAGES = 500;
+const MAX_MESSAGES = 60;
 
 type StoredMessage = {
   id: string;
@@ -83,15 +83,18 @@ export async function POST(request: Request) {
     const action = cleanText(payload.action, 20);
 
     if (action === 'add') {
-      const countRow = await env.DB.prepare('SELECT COUNT(*) AS count FROM messages').first<{ count: number }>();
-      if ((countRow?.count ?? 0) >= MAX_MESSAGES) {
-        return json({ ok: false, error: '留言樹目前已滿，請聯絡管理者整理。' }, 409);
+      const slotRows = await env.DB.prepare('SELECT slot FROM messages ORDER BY slot').all<{ slot: number }>();
+      const usedSlots = new Set((slotRows.results ?? []).map((row) => row.slot));
+      if (usedSlots.size >= MAX_MESSAGES) {
+        return json({ ok: false, error: '這棵樹已經有 60 片葉子，已達上限。' }, 409);
       }
-      const item = cleanItem(payload.item, 0);
+      let nextSlot = 0;
+      while (usedSlots.has(nextSlot) && nextSlot < MAX_MESSAGES) nextSlot += 1;
+      const item = cleanItem(payload.item, nextSlot);
       await env.DB.prepare(
         `INSERT INTO messages (id, name, message, slot, rotation, color, created_at)
-         SELECT ?, ?, ?, COALESCE(MAX(slot), -1) + 1, ?, ?, ? FROM messages`,
-      ).bind(item.id, item.name, item.message, item.rotation, item.color, item.createdAt).run();
+         VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      ).bind(item.id, item.name, item.message, item.slot, item.rotation, item.color, item.createdAt).run();
       return json({ ok: true, items: await listMessages() }, 201);
     }
 
