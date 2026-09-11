@@ -1,7 +1,7 @@
 import { env } from 'cloudflare:workers';
 
 const COLORS = ['#087ac1', '#1594d0', '#075caa', '#27a9df', '#176fc0', '#43b6e5'];
-const MAX_MESSAGES = 60;
+const MAX_MESSAGES = 500;
 
 type StoredMessage = {
   id: string;
@@ -86,7 +86,7 @@ export async function POST(request: Request) {
       const slotRows = await env.DB.prepare('SELECT slot FROM messages ORDER BY slot').all<{ slot: number }>();
       const usedSlots = new Set((slotRows.results ?? []).map((row) => row.slot));
       if (usedSlots.size >= MAX_MESSAGES) {
-        return json({ ok: false, error: '這棵樹已經有 60 片葉子，已達上限。' }, 409);
+        return json({ ok: false, error: '留言數量過多，請聯絡管理者整理。' }, 409);
       }
       let nextSlot = 0;
       while (usedSlots.has(nextSlot) && nextSlot < MAX_MESSAGES) nextSlot += 1;
