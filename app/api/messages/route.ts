@@ -35,7 +35,7 @@ function cleanText(value: unknown, maxLength: number) {
 function cleanItem(value: unknown, slot: number, preserveCreatedAt = false): StoredMessage {
   const item = (value && typeof value === 'object' ? value : {}) as Record<string, unknown>;
   const name = cleanText(item.name, 10);
-  const message = cleanText(item.message, 40);
+  const message = String(item.message ?? '').trim();
   if (!message) throw new Error('留言內容必須填寫。');
   const requestedRotation = Number(item.rotation);
   const rotation = Number.isFinite(requestedRotation)
@@ -77,8 +77,6 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const length = Number(request.headers.get('content-length') || 0);
-    if (length > 100_000) return json({ ok: false, error: '傳送的資料太大。' }, 413);
     const payload = (await request.json()) as Record<string, unknown>;
     const action = cleanText(payload.action, 20);
 
