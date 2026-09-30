@@ -149,7 +149,6 @@ button { cursor: pointer; }
 .message-form { display: grid; gap: 15px; }
 .message-form label { display: grid; gap: 7px; font-weight: 750; }
 .message-form input, .message-form textarea { min-height: 44px; border-radius: 12px; background: #fbfeff; font-weight: 500; }
-.character-count { margin-top: -10px; color: #6f8994; font-size: 13px; text-align: right; }
 .form-actions { margin-top: 5px; }
 .detail-message { min-height: 90px; margin: 0; padding: 17px; border-radius: 14px; background: #edf8fc; font-size: 16px; line-height: 1.7; white-space: pre-wrap; overflow-wrap: anywhere; }
 .list-card { max-height: 78vh; }
