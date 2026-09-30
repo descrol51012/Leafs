@@ -196,11 +196,11 @@ export default function Home() {
     const registration = context.registerTool({
       name: 'add_leaf_message',
       title: '新增樹葉留言',
-      description: '在目前的共用留言樹新增一片含短留言的葉子。',
+      description: '在目前的共用留言樹新增一片含留言的葉子。',
       inputSchema: {
         type: 'object',
         properties: {
-          message: { type: 'string', minLength: 1, maxLength: 40 },
+          message: { type: 'string', minLength: 1 },
         },
         required: ['message'],
         additionalProperties: false,
@@ -209,9 +209,7 @@ export default function Home() {
       async execute(input) {
         const value = input as { message?: unknown };
         const toolMessage = String(value?.message ?? '').trim();
-        if (!toolMessage || toolMessage.length > 40) {
-          throw new Error('留言需為 1–40 字。');
-        }
+        if (!toolMessage) throw new Error('留言內容必須填寫。');
         const items = await callApi({
           action: 'add',
           item: {
@@ -370,8 +368,7 @@ export default function Home() {
         <DialogContent className="dialog-card">
           <DialogHeader><DialogTitle>新增一片藍色樹葉</DialogTitle><DialogDescription>留言會直接顯示在葉子上。</DialogDescription></DialogHeader>
           <form onSubmit={submitMessage} className="message-form">
-            <label>留言內容<Textarea value={message} onChange={(event) => setMessage(event.target.value)} maxLength={40} required rows={4} autoFocus /></label>
-            <span className="character-count">{message.length}/40</span>
+            <label>留言內容<Textarea value={message} onChange={(event) => setMessage(event.target.value)} required rows={6} autoFocus /></label>
             <DialogFooter className="form-actions"><Button type="button" variant="outline" onClick={() => setFormOpen(false)}>取消</Button><Button type="submit" disabled={submitting}>{submitting ? '送出中…' : '送出葉子'}</Button></DialogFooter>
           </form>
         </DialogContent>
