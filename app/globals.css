@@ -144,11 +144,12 @@ button { cursor: pointer; }
 }
 .stage-qr img { width: 126px; height: 126px; }
 .stage-qr span { font-size: 12px; }
-.dialog-card { display: flex; width: min(520px, calc(100vw - 28px)); max-width: 520px; max-height: min(86vh, 760px); padding: 24px; overflow: hidden; border-radius: 22px; box-shadow: 0 25px 80px rgba(0,48,80,.27); }
+.dialog-card { display: flex; flex-direction: column; width: min(520px, calc(100vw - 28px)); max-width: 520px; max-height: min(86vh, 760px); padding: 24px; overflow: hidden; border-radius: 22px; box-shadow: 0 25px 80px rgba(0,48,80,.27); }
 .dialog-card [data-slot="dialog-title"] { color: #075a9d; font-size: 21px; font-weight: 850; }
-.message-form { display: grid; gap: 15px; }
+.message-form { display: grid; width: 100%; gap: 15px; }
 .message-form label { display: grid; gap: 7px; font-weight: 750; }
 .message-form input, .message-form textarea { min-height: 44px; border-radius: 12px; background: #fbfeff; font-weight: 500; }
+.message-form textarea { width: 100%; min-height: 150px; resize: vertical; }
 .form-actions { margin-top: 5px; }
 .detail-message { min-height: 90px; max-height: min(60vh, 560px); margin: 0; padding: 17px; overflow-y: auto; overscroll-behavior: contain; scrollbar-gutter: stable; border-radius: 14px; background: #edf8fc; font-size: 16px; line-height: 1.7; white-space: pre-wrap; overflow-wrap: anywhere; }
 .list-card { max-height: 78vh; }
@@ -173,6 +174,9 @@ button { cursor: pointer; }
   .site-shell { padding: 18px 8px 24px; }
   .site-header h1 { font-size: 32px; }
   .dialog-card { max-height: calc(100dvh - 24px); padding: 20px; }
+  .message-form textarea { min-height: 170px; }
+  .dialog-card .form-actions { flex-direction: row; justify-content: flex-end; width: 100%; }
+  .dialog-card .form-actions button { min-width: 108px; min-height: 46px; }
   .detail-message { max-height: calc(100dvh - 190px); }
   .tree-stage { min-height: 390px; aspect-ratio: 740/540; border-radius: 22px; }
   .tree-image { left: 0; width: 100%; height: 100%; object-fit: contain; object-position: center bottom; transform: scaleX(.92); transform-origin: center bottom; }
